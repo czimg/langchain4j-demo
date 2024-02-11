@@ -3,7 +3,7 @@ LangChain4j Demo Project
 Description:
 
 A simple implementation of the LangChain4j AIService, which is prompted to give information about the pdf file located in the resources/documents folder.
-To communicate with the AIService, you can use the provided chat app OR directly using through the endpoint.
+To communicate with the AIService, you can use the provided chat app OR directly through the endpoint.
 
 Used tech:
 - LLM: Ollama with Llama2 OR Mistral model
