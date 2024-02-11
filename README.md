@@ -16,5 +16,5 @@ Configuration:
 - See the application.properties file.
 
 Note:
-- I case of some kind of "test_collection" error, just run the app again.
+- In case of some kind of "test_collection" error, just run the app again.
 - The problem is with the deleteCollection() method of the qdrant DB, it's sometimes not working properly, but its necessary to reset the collection before the embedding of the pdf.
