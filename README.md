@@ -7,6 +7,7 @@ Description:
 - Endpoint: localhost:8080/api/message 
 
 Used:
+- Java Spring
 - LLM: Ollama
 - Database: Qdrant
 - Chat: Vaadin
