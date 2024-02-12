@@ -8,11 +8,14 @@ import dev.langchain4j.data.document.parser.apache.pdfbox.ApachePdfBoxDocumentPa
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
+import dev.langchain4j.rag.RetrievalAugmentor;
+import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -34,9 +37,13 @@ public class CustomerSupportAgentService {
     @Autowired
     private ChatLanguageModel chatLanguageModel;
     @Autowired
+    private ChatMemory chatMemory;
+    @Autowired
     private EmbeddingModel embeddingModel;
     @Autowired
     private EmbeddingStore<TextSegment> embeddingStore;
+    @Autowired
+    private RetrievalAugmentor retrievalAugmentor;
 
     @PostConstruct
     private void initialize() throws IOException {
@@ -56,38 +63,12 @@ public class CustomerSupportAgentService {
 
     public String generateAgentResponse(String userMessage) {
 
-        String question = userMessage;
-        Embedding questionEmbedding = embeddingModel.embed(question).content();
-
-        final int MAX_RESULTS = 2;
-        final double MIN_SCORE = 0.5;
-        List<EmbeddingMatch<TextSegment>> relevantEmbeddings = embeddingStore.findRelevant(questionEmbedding, MAX_RESULTS, MIN_SCORE);
-
-        PromptTemplate promptTemplate = PromptTemplate.from(
-                "You are a customer support agent called Skynet for a corporation called Weyland-Yutani.\n" +
-                        "Your task is to pass the information about the products that are for sale listed in the item list of the corporation.\n" +
-                        "The customer's question:\n"
-                        + "{{question}}\n" +
-                        "Base your answer on the following information:\n"
-                        + "{{information}}\n"
-        );
-
-        String information = relevantEmbeddings.stream()
-                .map(match -> match.embedded().text())
-                .collect(Collectors.joining("\n\n"));
-
-        Map<String, Object> variables = Map.ofEntries(
-                Map.entry("question", question),
-                Map.entry("information", information)
-        );
-
-        Prompt prompt = promptTemplate.apply(variables);
-
         CustomerSupportAgent customerSupportAgent = AiServices.builder(CustomerSupportAgent.class)
                 .chatLanguageModel(chatLanguageModel)
-                .chatMemory(MessageWindowChatMemory.withMaxMessages(20))
+                .chatMemory(chatMemory)
+                .retrievalAugmentor(retrievalAugmentor)
                 .build();
 
-        return customerSupportAgent.chat(prompt.text());
+        return customerSupportAgent.chat(userMessage);
     }
 }
