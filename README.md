@@ -6,7 +6,7 @@ Description:
 - Chat app: localhost:8080
 - Endpoint: localhost:8080/api/message 
 
-Used tech:
+Used:
 - LLM: Ollama
 - Database: Qdrant
 - Chat: Vaadin
