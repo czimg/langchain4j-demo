@@ -18,7 +18,7 @@ Configuration:
 
 Docker:
 - Both the model and the database are running in a seperate docker container as services with default settings (see compose.yaml).
-- In case of the used model (default: mistral) is not pulled for the ollama service, use the following command: ollama run [model_name]
+- In case of the used model (default: mistral) is not pulled for the ollama service, use the following command: docker exec -it langchain4j-demo-ollama-service-1 ollama run [model_name]
 
 Notes:
 - In case of some kind of "test_collection" error, just run the app again.
