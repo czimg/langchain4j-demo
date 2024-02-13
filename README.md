@@ -14,7 +14,7 @@ Used:
 
 Configuration:
 - See the application.properties file.
-- model_name can be change for whatever model you would like to use that is supported by ollama.
+- model_name (default: mistral) can be changed for whatever model you would like to use that is supported by ollama.
 
 Docker:
 - Both the model and the database are running in a seperate docker container as services with default settings (see compose.yaml).
